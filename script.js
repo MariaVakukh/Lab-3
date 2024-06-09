@@ -1,11 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-  
+    /*     localStorage.clear(); */
         const list = document.querySelector(".list");
         const itemTemplate = document.getElementById("item-template").content.firstElementChild;
     
         const leftItems = document.querySelector(".left-items");
         const boughtItems = document.querySelector(".bought-items");
         const blItemTemplate = document.getElementById("product-template").content.firstElementChild;
+    
+        function saveItems(items) {
+            localStorage.setItem('shoppingList', JSON.stringify(items));
+        }
+    
+        function loadItems() {
+            return JSON.parse(localStorage.getItem('shoppingList')) || [];
+        }
     
         function addItem(title, initialAmount = 1, isBought = false) {
             const hr = document.createElement("hr");
@@ -49,10 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (amount > 1) {
                     amount--;
                     itemAmount.textContent = leftAmount.textContent = boughtAmount.textContent = amount;
-                    if (amount === 1) {
-                        minusButton.disabled = true;
-                        minusButton.classList.replace("minus", "minus-off");
-                    }
+                    updateLocalStorage();
                 }
             });
     
@@ -61,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 itemAmount.textContent = leftAmount.textContent = boughtAmount.textContent = amount;
                 minusButton.classList.replace("minus-off", "minus");
                 minusButton.disabled = false;
+                updateLocalStorage();
             });
     
             statusButton.addEventListener('click', function () {
@@ -76,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     leftItem.style.display = 'block';
                     boughtItem.style.display = 'none';
                 }
+                updateLocalStorage();
             });
     
             delButton.addEventListener('click', function () {
@@ -83,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 node.remove();
                 leftItem.remove();
                 boughtItem.remove();
+                updateLocalStorage();
             });
     
             itemName.addEventListener('dblclick', function () {
@@ -121,14 +129,37 @@ document.addEventListener('DOMContentLoaded', function () {
             list.append(node);
             leftItems.appendChild(leftItem);
             boughtItems.appendChild(boughtItem);
-
+    
+            if (isBought) {
+                node.classList.add("is-bought");
+                node.querySelector(".status").textContent = "Не куплено";
+                statusButton.setAttribute('data-tooltip', "Not bought");
+                leftItem.style.display = 'none';
+                boughtItem.style.display = 'block';
+            }
         }
+    
+        function updateLocalStorage() {
+            const items = [];
+            document.querySelectorAll(".list .item").forEach(node => {
+                const title = node.querySelector(".name").textContent;
+                const amount = parseInt(node.querySelector(".amount-left").textContent);
+                const isBought = node.classList.contains("is-bought");
+                items.push({ title, amount, isBought });
+            });
+            saveItems(items);
+        }
+    
+    
+        const savedItems = loadItems();
+        savedItems.forEach(item => addItem(item.title, item.amount, item.isBought));
     
         const newInput = document.querySelector(".add-iname");
         document.querySelector(".add").addEventListener('click', function () {
             const newName = newInput.value;
             if (newName) {
                 addItem(newName);
+                updateLocalStorage();
                 newInput.value = "";
                 newInput.focus();
             }
@@ -139,9 +170,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const newName = newInput.value.trim();
                 if (newName) {
                     addItem(newName);
+                    updateLocalStorage();
                     newInput.value = "";
                     newInput.focus();
                 }
             }
         });
     });
+    

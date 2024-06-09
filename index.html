@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ua">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy List</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <section class="list">
+        <header>
+            <input type="text" class="add-iname" placeholder="Назва товару"/>  
+            <button class="add" data-tooltip="Add">Додати</button>
+        </header>
+
+        <template id="item-template">
+            <article class="item">
+                <span class="name"></span>
+                <span class="controls">
+                    <button class="minus" data-tooltip="Decrease">–</button>
+                    <span class="amount-left">1</span>
+                    <button class="plus" data-tooltip="Increase">+</button>
+                </span> 
+                <span class="purchase">
+                    <button class="status" data-tooltip="Bought">Куплено</button>
+                    <button class="delete" data-tooltip="delete">×</button>
+                </span>
+            </article>
+        </template>
+    </section>
+
+    <section class="left-bought">
+        <article class="lb-item">
+            Залишилося
+        </article>
+        <hr>
+        <article class="lb-item left-items"></article>
+        <hr>
+        <article class="lb-item">
+            Куплено
+        </article>
+        <hr>
+        <article class="lb-item bought-items"></article>
+    </section>
+
+
+    <template id="product-template">
+        <span class="product-item">
+            <span class="product-name" ></span>
+            <span class="amount" ></span>
+        </span>
+    </template>
+
+    <footer class="badge">
+        <span class="badge-text">BuyList</span>
+        <span class="badge-hover">created by: Vakukh Maria</span>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
